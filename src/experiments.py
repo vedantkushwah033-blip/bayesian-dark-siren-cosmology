@@ -95,13 +95,14 @@ def run_repeated(
             "missing_host_prior_mass": float(missing_weight),
             "median": float(summary["median"]),
             "mean": float(summary["mean"]),
+            "posterior_sd": float(summary["posterior_sd"]),
             "lower_68": float(summary["lower_68"]),
             "upper_68": float(summary["upper_68"]),
             "lower_95": float(summary["lower_95"]),
             "upper_95": float(summary["upper_95"]),
             "width_68": float(summary["upper_68"] - summary["lower_68"]),
             "width_95": float(summary["upper_95"] - summary["lower_95"]),
-            "pull": float((summary["median"] - H0_true) / half68),
+            "pull": float((summary["median"] - H0_true) / max(summary["posterior_sd"], 1e-12)),
         })
 
     if not rows:
