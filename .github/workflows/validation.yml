@@ -41,6 +41,17 @@ jobs:
           mkdir -p calibration_output
           python run_calibration.py | tee calibration_output/calibration_summary.txt
 
+      - name: Run paired incompleteness pilot
+        run: |
+          mkdir -p pilot_output
+          python run_incompleteness_pilot.py | tee pilot_output/incompleteness_pilot.txt
+
+      - name: Upload incompleteness pilot
+        uses: actions/upload-artifact@v4
+        with:
+          name: incompleteness-pilot
+          path: pilot_output/incompleteness_pilot.txt
+
       - name: Run known-host baseline diagnostic
         run: |
           mkdir -p diagnostics_output
