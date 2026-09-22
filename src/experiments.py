@@ -45,6 +45,7 @@ def run_repeated(
     host_generation="uniform",
     inference_weighting=None,
     include_missing_host_term=False,
+    missing_host_weighting="inference",
     seed=2026,
 ):
     """Run independent mock universes and return per-run diagnostics.
@@ -56,6 +57,9 @@ def run_repeated(
     if inference_weighting is None:
         inference_weighting = host_generation
 
+    if missing_host_weighting not in {"inference", "oracle_true"}:
+        raise ValueError("missing_host_weighting must be 'inference' or 'oracle_true'.")
+
     rows = []
     grid = np.linspace(50.0, 90.0, 1601)
 
@@ -65,6 +69,7 @@ def run_repeated(
             n_galaxies=n_galaxies, H0_true=H0_true, seed=s
         )
         true_weights = _weights(cat, host_generation)
+        inference_weights = _weights(cat, inference_weighting)
         host = choose_host(cat, weighting=host_generation, seed=s + 100000)
         gw = simulate_gw_event(
             cat["true_distance_mpc"][host],
@@ -73,7 +78,7 @@ def run_repeated(
         mask = _mask(cat, completeness, missingness, s + 300000)
 
         hidden = ~mask
-        observed_weights = _weights(cat, inference_weighting)[mask]
+        observed_weights = inference_weights[mask]
         if observed_weights.size == 0:
             continue
 
@@ -81,9 +86,10 @@ def run_repeated(
         missing_z = None
         missing_w = None
         if include_missing_host_term and missingness != "complete" and hidden.any():
-            missing_weight = float(true_weights[hidden].sum() / true_weights.sum())
+            support_weights = inference_weights if missing_host_weighting == "inference" else true_weights
+            missing_weight = float(support_weights[hidden].sum() / support_weights.sum())
             missing_z = cat["redshift"][hidden]
-            missing_w = true_weights[hidden]
+            missing_w = support_weights[hidden]
 
         posterior = posterior_h0(
             grid,
@@ -103,6 +109,7 @@ def run_repeated(
                 "H0_true": float(H0_true),
                 "host_generation": host_generation,
                 "inference_weighting": inference_weighting,
+                "missing_host_weighting": missing_host_weighting,
                 "missingness": missingness,
                 "target_completeness": completeness,
                 "realized_completeness": float(mask.mean()),
@@ -142,6 +149,7 @@ def run_experiment_grid(
     n_galaxies=500,
     H0_true=70.0,
     include_missing_host_term=False,
+    missing_host_weighting="inference",
     seed=2026,
 ):
     """Run the planned host-weighting × completeness × selection matrix."""
@@ -162,6 +170,7 @@ def run_experiment_grid(
                         host_generation=host_model,
                         inference_weighting=inference_model,
                         include_missing_host_term=include_missing_host_term,
+                        missing_host_weighting=missing_host_weighting,
                         seed=seed + counter * 1000000,
                     )
                     results.extend(rows)
