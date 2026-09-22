@@ -41,6 +41,17 @@ jobs:
           mkdir -p calibration_output
           python run_calibration.py | tee calibration_output/calibration_summary.txt
 
+      - name: Run known-host baseline diagnostic
+        run: |
+          mkdir -p diagnostics_output
+          python run_baseline_diagnostics.py | tee diagnostics_output/known_host_summary.txt
+
+      - name: Upload diagnostic summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: baseline-diagnostics
+          path: diagnostics_output/known_host_summary.txt
+
       - name: Upload calibration summary
         uses: actions/upload-artifact@v4
         with:
