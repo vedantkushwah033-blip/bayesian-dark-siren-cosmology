@@ -116,9 +116,15 @@ This avoids turning one simulation setup into a universal claim about dark-siren
 
 ## Current status
 
-The repository contains the mock-universe generator, Bayesian inference model, catalogue-selection mechanisms, repeated-universe experiment framework, validation metrics, and regression tests.
+The repository contains the mock-universe generator, Bayesian inference model, catalogue-selection mechanisms, repeated-universe experiment framework, validation metrics, regression tests, publication-figure pipeline, and a lightweight GP redshift-density pilot.
 
-The next stage is to execute the experiment matrix, inspect the resulting diagnostics, and only then write the scientific interpretation.
+The main 15,300-run experiment matrix and the 3,600-run GP pilot have now been executed. The GP pilot produced a negative result: its current redshift-density reweighting narrowed posteriors but increased bias and reduced 68% coverage. The final interpretation therefore treats the GP extension as a diagnostic/falsification experiment rather than a successful correction.
+
+## Current empirical conclusion
+
+Within this controlled low-redshift simulation, catalogue incompleteness and simple host-weighting misspecification do not produce a single universal failure mode. The strongest mechanism-specific changes occur for redshift-dependent missingness, while the full host-weighting matrix shows only modest average differences between matched and mismatched assumptions. The lightweight GP reconstruction does not recover the missing information: across 3,600 paired runs it increases mean median-bias by about 1.31 km/s/Mpc, reduces mean 68% interval width by about 1.98 km/s/Mpc, and lowers 68% coverage by about 2.78 percentage points.
+
+These statements are conditional on the simulation assumptions and should not be interpreted as claims about real LVK catalogues or detector data.
 
 ## Reproducibility
 
