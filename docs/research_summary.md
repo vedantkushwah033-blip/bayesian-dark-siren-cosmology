@@ -36,9 +36,19 @@ The study also varies host-generation and inference weighting independently:
 
 This separates catalogue incompleteness from host-prior misspecification.
 
-## Main findings
+## Statistical calibration
 
-The complete-catalogue control is reproducible but not perfectly nominally calibrated, so incomplete cases are interpreted relative to the same baseline rather than against an idealized benchmark.
+A dedicated **2,000-run posterior-coverage calibration** independently reproduced from the repository's current calibration script found:
+
+- nominal 50% interval → 87.45% empirical coverage;
+- nominal 68% interval → **94.35% empirical coverage**;
+- nominal 80% interval → 97.35%;
+- nominal 90% interval → 99.05%;
+- nominal 95% interval → 99.85%.
+
+This shows that the baseline posterior intervals are conservative in the present synthetic model. The result is a calibration diagnostic for this model, not a claim about real dark-siren analyses.
+
+## Main findings
 
 Random incompleteness alone produced relatively small changes in the baseline simulation. Redshift-dependent missingness produced the clearest mechanism-specific changes.
 
@@ -58,6 +68,12 @@ The GP narrowed posterior intervals but did not improve inference:
 
 The result is reported as a diagnostic/falsification result, not as a successful method. It illustrates that narrower posterior intervals are not automatically better if systematic uncertainty is not recovered.
 
+## What the project demonstrates
+
+The central result is methodological: catalogue completeness, missingness mechanism, host-population assumptions, and reconstruction choices can be separated into independently testable simulation controls. The current baseline shows that nominal completeness alone does not determine posterior behaviour; how galaxies are missing can matter.
+
+These conclusions are conditional on the simplified simulation assumptions.
+
 ## Current research direction
 
 The next scientifically motivated extension is to move from the controlled baseline toward:
@@ -71,10 +87,10 @@ The next scientifically motivated extension is to move from the controlled basel
 
 ## Scope
 
-This is an undergraduate simulation study, not a reproduction of the full LVK analysis pipeline. The conclusions are conditional on the stated simulation assumptions.
+This is an undergraduate simulation study, not a reproduction of the full LVK analysis pipeline or a real H₀ measurement. The conclusions are conditional on the stated simulation assumptions.
 
 ## Reproducibility
 
-The complete source code, tests, experiment workflows, analysis scripts, figures, and methodological documentation are available in the project repository.
+The complete source code, tests, experiment workflows, analysis scripts, and methodological documentation are available in the project repository. The main numerical outputs are archived as execution artifacts.
 
 **GitHub:** https://github.com/vedantkushwah033-blip/bayesian-dark-siren-cosmology
