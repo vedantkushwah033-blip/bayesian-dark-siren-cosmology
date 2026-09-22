@@ -37,10 +37,15 @@ jobs:
         run: |
           python analyze_results.py
 
-      - name: Upload raw and summary results
+      - name: Generate publication figures
+        run: |
+          python make_figures.py
+
+      - name: Upload experiment results and figures
         uses: actions/upload-artifact@v4
         with:
           name: full-experiment-matrix
           path: |
             results/experiment_matrix.csv
             results/summary_matrix.csv
+            results/figures/
