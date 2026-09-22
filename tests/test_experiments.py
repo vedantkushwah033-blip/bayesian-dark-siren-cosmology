@@ -11,7 +11,7 @@ def test_repeated_run_is_reproducible():
 
 def test_missing_host_term_has_unit_total_prior_mass():
     cat_z = np.array([0.01, 0.02, 0.03, 0.04])
-    weights = np.array([1.0, 1.0, 1.0])
+    weights = np.array([1.0, 1.0, 1.0, 1.0])
     missing = np.array([0.05])
     missing_w = np.array([1.0])
     grid = np.linspace(50, 90, 401)
