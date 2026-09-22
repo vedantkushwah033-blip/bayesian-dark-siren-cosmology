@@ -1,37 +1,137 @@
 # Bayesian Dark-Siren Cosmology
 
-A Bayesian simulation study of galaxy-catalogue incompleteness and host-galaxy weighting in dark-siren H0 inference.
+## A controlled simulation study of galaxy-catalogue incompleteness and host-galaxy assumptions
 
-## Research question
+This project asks a practical question in gravitational-wave cosmology:
 
-When the host galaxy of a gravitational-wave event is unknown, how do incomplete galaxy catalogues and different assumptions about host-galaxy weighting affect Bayesian inference of the Hubble constant H0?
+> **When the galaxy that hosted a gravitational-wave event is not identified, how much can the galaxy catalogue and our assumptions about the host population affect the inferred Hubble constant, H₀?**
 
-## Current model
+The project is deliberately simulation-first. We create a known mock universe, hide the true host from the inference code, introduce controlled catalogue incompleteness, and then ask how well the Bayesian analysis recovers the injected H₀.
 
-The first stage uses a deliberately simplified low-redshift relation:
+The goal is not to claim a new precision cosmology method. The goal is to make the effect of catalogue assumptions measurable, reproducible, and easy to audit.
 
-**d_L approximately equals c z / H0**
+## Why this matters
 
-The simulation creates a fixed underlying synthetic galaxy universe, chooses a hidden host, generates a noisy gravitational-wave luminosity-distance measurement, and infers H0 from a mixture over candidate host galaxies.
+A dark siren is a gravitational-wave event whose host galaxy is not uniquely identified. The gravitational-wave signal provides a luminosity-distance measurement, while possible host galaxies provide redshift information. The inference therefore depends on a population of candidate galaxies rather than one known host.
 
-## Experimental design
+That makes catalogue construction part of the statistical problem.
 
-- Complete catalogue baseline: 100%
-- Catalogue completeness: 90%, 70%, 50%
-- Planned missingness mechanisms: random, faint-galaxy, redshift-dependent, and sky-region/footprint missingness
-- Planned host weighting: uniform, luminosity proxy, and mass proxy
-- Planned evaluation: bias, posterior width, RMSE, and 68%/95% coverage over repeated simulations
+Two catalogues can contain the same fraction of the underlying galaxies and still behave differently if the missing galaxies are preferentially faint, distant, or located outside the observed sky footprint. Host-galaxy weighting can introduce another layer of model dependence.
 
-## Important methodological distinction
+This study keeps those effects separate.
 
-The underlying universe is kept fixed when catalogue incompleteness is introduced. We distinguish:
+## Research design
 
-1. **Catalogue-only inference:** omitted galaxies are ignored.
-2. **Oracle-complete validation:** omitted galaxies are retained in the likelihood only as a simulation control.
-3. **Host-weight mismatch experiments:** the population model used to generate the hidden host can deliberately differ from the weighting model used during inference.
+The simulation proceeds in this order:
 
-These are separate experiments and will not be conflated.
+1. Generate a complete synthetic galaxy population.
+2. Assign each galaxy a redshift and distance using the low-redshift baseline relation.
+3. Assign simple luminosity and mass proxies.
+4. Draw a hidden host from a specified host-population model.
+5. Generate a noisy gravitational-wave distance measurement.
+6. Apply a catalogue-selection mechanism to the same underlying universe.
+7. Perform Bayesian H₀ inference using only the observed catalogue.
+8. Optionally include an explicit uncatalogued-host component.
+9. Repeat the experiment across independent mock universes.
+10. Measure bias, RMSE, posterior width, coverage, and pull behaviour.
 
-## Scope
+The hidden host is used only for validation. It is never supplied to the inference calculation.
 
-This is a controlled simulation study, not a claim of precision cosmological constraints from current LIGO-Virgo-KAGRA data. The baseline is intentionally simplified; more realistic selection effects and cosmological distance-redshift relations will be added only after baseline validation succeeds.
+## Experimental factors
+
+### Catalogue completeness
+
+- 100%
+- 90%
+- 70%
+- 50%
+
+### Missingness mechanisms
+
+- Complete catalogue
+- Random missingness
+- Faint-galaxy selection
+- Redshift-dependent selection
+- Sky-footprint selection
+
+### Host-population models
+
+- Uniform
+- Luminosity weighted
+- Mass-proxy weighted
+
+### Inference assumptions
+
+The host-generation model and inference weighting are allowed to match or deliberately disagree. This lets the study distinguish catalogue incompleteness from host-prior misspecification.
+
+## Baseline cosmology
+
+The first-stage simulation uses
+
+**d_L ≈ c z / H₀**
+
+as a low-redshift approximation.
+
+This is a controlled baseline, not a replacement for the full cosmological distance-redshift relation. More realistic effects will only be introduced after the baseline has been validated.
+
+## Missing-host model
+
+When catalogue galaxies are omitted, the project can include a separate uncatalogued-host likelihood contribution.
+
+Schematically,
+
+**L(H₀) = L_catalogue(H₀) + L_missing(H₀)**
+
+where the missing component is represented in the simulation by the redshift distribution and host-population weight of galaxies absent from the observed catalogue.
+
+This is an **oracle validation model** because the simulation knows the underlying population. It is not being presented as a complete real-survey selection model.
+
+## Validation
+
+Each simulation records:
+
+- posterior mean and median
+- 68% credible interval
+- 95% credible interval
+- posterior width
+- H₀ bias
+- RMSE
+- 68% coverage
+- 95% coverage
+- Monte-Carlo uncertainty on coverage
+- pull
+- whether the hidden host was observed
+
+The 100% complete, correctly specified experiment is the calibration control.
+
+## What would count as a meaningful result?
+
+We will not describe a catalogue as simply “good” or “bad”.
+
+Instead, results will be stated conditionally, for example:
+
+> Under the simulated redshift distribution, host population, GW distance uncertainty, and missingness mechanism used here, reducing catalogue completeness changed the recovered H₀ bias and posterior coverage by the measured amounts.
+
+This avoids turning one simulation setup into a universal claim about dark-siren cosmology.
+
+## Current status
+
+The repository contains the mock-universe generator, Bayesian inference model, catalogue-selection mechanisms, repeated-universe experiment framework, validation metrics, and regression tests.
+
+The next stage is to execute the experiment matrix, inspect the resulting diagnostics, and only then write the scientific interpretation.
+
+## Reproducibility
+
+The simulation uses explicit random seeds. The raw experiment output is intended to be generated by:
+
+    python run_experiment_matrix.py
+
+The analysis should be run only after the simulation output exists. No numerical result should be inserted into the paper or README unless it comes from an actual executed run.
+
+## Scope and limitations
+
+This is an undergraduate simulation study. It does not claim to reproduce the full LVK analysis pipeline.
+
+Important effects intentionally left for later stages include detailed detector selection, peculiar velocities, redshift measurement uncertainty, realistic sky localization, galaxy clustering, survey-specific selection functions, and full cosmological distance-redshift modelling.
+
+Those omissions are part of the staged design rather than hidden assumptions.
