@@ -233,16 +233,15 @@ The current project should not add complexity merely to obtain a positive result
 
 The repository contains the simulation code, inference model, selection mechanisms, metrics, tests, experiment workflows, and figure-generation pipeline.
 
-The main experimental outputs were generated through GitHub Actions:
+The main experimental outputs were generated through the repository's execution workflows and archived artifacts, including:
 
 - 15,300-run host-weighting/incompleteness matrix;
 - 3,600-run paired GP pilot;
 - 1,000-run baseline calibration;
-- 2,000-run posterior-coverage calibration;
 - known-host diagnostic;
 - paired missing-host and incompleteness pilots.
 
-All reported numerical results in this report are taken from executed simulation outputs rather than illustrative values.
+The dedicated 2,000-run posterior-coverage calibration was independently reproduced from the repository's current calibration script using the documented seed sequence. Its numerical values are therefore reported as an independent code reproduction; the corresponding GitHub Actions artifact was not independently retrieved through the current connector. Reported values are not illustrative values.
 
 ---
 
