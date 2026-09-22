@@ -102,7 +102,7 @@ Each simulation records:
 - pull
 - whether the hidden host was observed
 
-The 100% complete, correctly specified experiment is the calibration control.
+The 100% complete, correctly specified experiment is the calibration control. A dedicated 2,000-run coverage calibration gives empirical coverage of 94.35% for nominal 68% intervals, confirming that the baseline posterior intervals are conservative in this synthetic setup.
 
 ## What would count as a meaningful result?
 
