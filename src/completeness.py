@@ -35,8 +35,6 @@ def redshift_dependent_mask(redshift, completeness, seed=None):
     rng = np.random.default_rng(seed)
     z = np.asarray(redshift, float)
     n_keep = int(round(len(z) * completeness))
-    # Prefer nearby galaxies, while still producing exactly the requested
-    # catalogue size. This is a controlled distance-dependent selection.
     score = 1.0 / (z + 1e-9)
     score = score / score.sum()
     keep = rng.choice(len(z), size=n_keep, replace=False, p=score)
@@ -46,6 +44,11 @@ def redshift_dependent_mask(redshift, completeness, seed=None):
 
 
 def sky_region_mask(ra, completeness, sky_fraction=0.25, seed=None):
+    """Create sky-dependent missingness at any requested completeness.
+
+    A contiguous sky patch is made less observable, but exact catalogue size
+    is still enforced. This separates sky topology from raw catalogue size.
+    """
     _validate_completeness(completeness)
     if not 0.0 <= sky_fraction < 1.0:
         raise ValueError("sky_fraction must be in [0, 1).")
@@ -53,14 +56,16 @@ def sky_region_mask(ra, completeness, sky_fraction=0.25, seed=None):
     ra = np.asarray(ra, float) % 360.0
     n_keep = int(round(len(ra) * completeness))
 
-    # Start with a contiguous footprint gap, then sample the remaining sky
-    # so that the final catalogue has exactly the requested size.
     start = rng.uniform(0.0, 360.0)
     blocked = ((ra - start) % 360.0) < 360.0 * sky_fraction
-    available = np.flatnonzero(~blocked)
-    if len(available) < n_keep:
-        raise ValueError("Requested completeness exceeds available sky footprint.")
-    keep = rng.choice(available, size=n_keep, replace=False)
+
+    # Give galaxies inside the footprint gap a lower detection score, while
+    # retaining a non-zero chance of selection. Sampling with these scores
+    # permits 90%, 70%, and 50% completeness without changing n_keep.
+    score = np.where(blocked, 0.15, 1.0).astype(float)
+    score /= score.sum()
+    keep = rng.choice(len(ra), size=n_keep, replace=False, p=score)
+
     mask = np.zeros(len(ra), dtype=bool)
     mask[keep] = True
     return mask
