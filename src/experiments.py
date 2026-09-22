@@ -100,6 +100,7 @@ def run_repeated(
         rows.append(
             {
                 "run": r,
+                "H0_true": float(H0_true),
                 "host_generation": host_generation,
                 "inference_weighting": inference_weighting,
                 "missingness": missingness,
