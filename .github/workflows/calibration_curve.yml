@@ -21,6 +21,7 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+        # The workflow intentionally follows the repository requirements file; package versions are not pinned yet.
 
       - name: Set up Python
         uses: actions/setup-python@v5
