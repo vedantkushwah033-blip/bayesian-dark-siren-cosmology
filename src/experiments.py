@@ -1,36 +1,33 @@
-"""Repeated mock-universe validation experiments.
+"""Controlled experiment matrix for dark-siren catalogue incompleteness."""
 
-The simulation separates the true underlying population from the observed
-catalogue. The hidden host is never supplied to the inference function.
-"""
 import numpy as np
 from .simulations_v2 import simulate_galaxy_catalogue, choose_host, simulate_gw_event
 from .bayesian_inference import posterior_h0, posterior_summary
 from .completeness import random_missing_mask, faint_missing_mask, redshift_dependent_mask, sky_region_mask
 
 
-def _host_weights(catalogue, mode):
+def _weights(cat, mode):
     if mode == "uniform":
-        return np.ones(len(catalogue["redshift"]))
+        return np.ones(len(cat["redshift"]))
     if mode == "luminosity":
-        return np.asarray(catalogue["luminosity_proxy"], float)
+        return np.asarray(cat["luminosity_proxy"], float)
     if mode == "mass":
-        return np.asarray(catalogue["mass_proxy"], float)
-    raise ValueError("Unknown host weighting.")
+        return np.asarray(cat["mass_proxy"], float)
+    raise ValueError("Unknown weighting mode.")
 
 
-def _mask(catalogue, completeness, mechanism, seed):
-    n = len(catalogue["redshift"])
+def _mask(cat, completeness, mechanism, seed):
+    n = len(cat["redshift"])
     if mechanism == "complete":
         return np.ones(n, dtype=bool)
     if mechanism == "random":
         return random_missing_mask(n, completeness, seed)
     if mechanism == "faint":
-        return faint_missing_mask(catalogue["luminosity_proxy"], completeness)
+        return faint_missing_mask(cat["luminosity_proxy"], completeness)
     if mechanism == "redshift":
-        return redshift_dependent_mask(catalogue["redshift"], completeness, seed)
+        return redshift_dependent_mask(cat["redshift"], completeness, seed)
     if mechanism == "sky":
-        return sky_region_mask(catalogue["ra_deg"], completeness, seed=seed)
+        return sky_region_mask(cat["ra_deg"], completeness, seed=seed)
     raise ValueError("Unknown missingness mechanism.")
 
 
@@ -45,12 +42,7 @@ def run_repeated(
     include_missing_host_term=False,
     seed=2026,
 ):
-    """Run independent mock universes and return per-run diagnostics.
-
-    The missing-host prior mass is calculated from the *host-population
-    weights*, not simply from the fraction of retained galaxies. This is
-    important for luminosity- and mass-weighted experiments.
-    """
+    """Run independent mock universes and return per-run diagnostics."""
     if inference_weighting is None:
         inference_weighting = host_generation
 
@@ -59,37 +51,28 @@ def run_repeated(
 
     for r in range(n_runs):
         s = seed + r
-        cat = simulate_galaxy_catalogue(
-            n_galaxies=n_galaxies, H0_true=H0_true, seed=s
-        )
-        true_weights = _host_weights(cat, host_generation)
+        cat = simulate_galaxy_catalogue(n_galaxies=n_galaxies, H0_true=H0_true, seed=s)
+        true_weights = _weights(cat, host_generation)
         host = choose_host(cat, weighting=host_generation, seed=s + 100000)
         gw = simulate_gw_event(cat["true_distance_mpc"][host], seed=s + 200000)
         mask = _mask(cat, completeness, missingness, s + 300000)
 
-        observed = mask
         hidden = ~mask
-        inference_weights_all = _host_weights(cat, inference_weighting)
-        observed_weights = inference_weights_all[observed]
+        observed_weights = _weights(cat, inference_weighting)[mask]
         if observed_weights.size == 0:
             continue
 
         missing_weight = 0.0
         missing_z = None
         missing_w = None
-        if include_missing_host_term and missingness != "complete":
-            # For a pedagogical oracle validation, the missing probability is
-            # the fraction of true host-population prior mass outside the
-            # observed catalogue.
-            total_true_mass = true_weights.sum()
-            missing_weight = float(true_weights[hidden].sum() / total_true_mass)
-            if hidden.any() and missing_weight > 0:
-                missing_z = cat["redshift"][hidden]
-                missing_w = true_weights[hidden]
+        if include_missing_host_term and missingness != "complete" and hidden.any():
+            missing_weight = float(true_weights[hidden].sum() / true_weights.sum())
+            missing_z = cat["redshift"][hidden]
+            missing_w = true_weights[hidden]
 
         posterior = posterior_h0(
             grid,
-            cat["redshift"][observed],
+            cat["redshift"][mask],
             gw["observed_distance_mpc"],
             gw["sigma_mpc"],
             weights=observed_weights,
@@ -98,24 +81,64 @@ def run_repeated(
             missing_weights=missing_w,
         )
         summary = posterior_summary(grid, posterior)
-        half_width = max((summary["upper_68"] - summary["lower_68"]) / 2.0, 1e-12)
+        half68 = max((summary["upper_68"] - summary["lower_68"]) / 2.0, 1e-12)
+
         rows.append({
             "run": r,
+            "host_generation": host_generation,
+            "inference_weighting": inference_weighting,
+            "missingness": missingness,
+            "target_completeness": completeness,
+            "realized_completeness": float(mask.mean()),
             "host_observed": bool(mask[host]),
-            "catalogue_completeness": float(mask.mean()),
-            "catalogue_prior_mass": float(1.0 - missing_weight),
+            "host_redshift": float(cat["redshift"][host]),
             "missing_host_prior_mass": float(missing_weight),
-            "median": summary["median"],
-            "mean": summary["mean"],
-            "lower_68": summary["lower_68"],
-            "upper_68": summary["upper_68"],
-            "lower_95": summary["lower_95"],
-            "upper_95": summary["upper_95"],
-            "posterior_width_68": summary["upper_68"] - summary["lower_68"],
-            "posterior_width_95": summary["upper_95"] - summary["lower_95"],
-            "pull": (summary["median"] - H0_true) / half_width,
+            "median": float(summary["median"]),
+            "mean": float(summary["mean"]),
+            "lower_68": float(summary["lower_68"]),
+            "upper_68": float(summary["upper_68"]),
+            "lower_95": float(summary["lower_95"]),
+            "upper_95": float(summary["upper_95"]),
+            "width_68": float(summary["upper_68"] - summary["lower_68"]),
+            "width_95": float(summary["upper_95"] - summary["lower_95"]),
+            "pull": float((summary["median"] - H0_true) / half68),
         })
 
     if not rows:
         raise ValueError("No valid simulation runs.")
     return rows
+
+
+def run_experiment_grid(
+    completeness_levels=(1.0, 0.9, 0.7, 0.5),
+    mechanisms=("complete", "random", "faint", "redshift", "sky"),
+    host_models=("uniform", "luminosity", "mass"),
+    n_runs=100,
+    n_galaxies=500,
+    H0_true=70.0,
+    include_missing_host_term=False,
+    seed=2026,
+):
+    """Run the planned host-weighting × completeness × selection matrix."""
+    results = []
+    counter = 0
+    for host_model in host_models:
+        for inference_model in host_models:
+            for mechanism in mechanisms:
+                for completeness in completeness_levels:
+                    if mechanism == "complete" and completeness != 1.0:
+                        continue
+                    rows = run_repeated(
+                        n_runs=n_runs,
+                        n_galaxies=n_galaxies,
+                        H0_true=H0_true,
+                        completeness=completeness,
+                        missingness=mechanism,
+                        host_generation=host_model,
+                        inference_weighting=inference_model,
+                        include_missing_host_term=include_missing_host_term,
+                        seed=seed + counter * 1000000,
+                    )
+                    results.extend(rows)
+                    counter += 1
+    return results
