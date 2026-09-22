@@ -47,6 +47,8 @@ def posterior_summary(H0_grid, posterior):
     H0_grid = np.asarray(H0_grid, dtype=float)
     posterior = np.asarray(posterior, dtype=float)
     mean = np.trapezoid(H0_grid * posterior, H0_grid)
+    variance = np.trapezoid((H0_grid - mean) ** 2 * posterior, H0_grid)
+    posterior_sd = np.sqrt(max(variance, 0.0))
     cdf = np.concatenate([[0.0], np.cumsum((posterior[1:] + posterior[:-1]) * np.diff(H0_grid) / 2)])
     cdf = cdf / cdf[-1]
-    return {"mean": mean, "median": np.interp(0.5, cdf, H0_grid), "lower_68": np.interp(0.16, cdf, H0_grid), "upper_68": np.interp(0.84, cdf, H0_grid), "lower_95": np.interp(0.025, cdf, H0_grid), "upper_95": np.interp(0.975, cdf, H0_grid)}
+    return {"mean": mean, "median": np.interp(0.5, cdf, H0_grid), "posterior_sd": posterior_sd, "lower_68": np.interp(0.16, cdf, H0_grid), "upper_68": np.interp(0.84, cdf, H0_grid), "lower_95": np.interp(0.025, cdf, H0_grid), "upper_95": np.interp(0.975, cdf, H0_grid)}
