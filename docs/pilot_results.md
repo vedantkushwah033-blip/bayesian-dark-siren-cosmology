@@ -16,9 +16,9 @@ The 300-run paired missing-host pilot compared naive catalogue-only inference wi
 
 The clearest mechanism-specific effect in this baseline is redshift-dependent incompleteness. Naive median bias changed from about +1.31 at 90% completeness to +0.97 at 70% and +0.68 at 50%, while posterior width increased from about 22.42 to 22.82 km/s/Mpc. Random, faint, and sky mechanisms produced much smaller changes in this configuration.
 
-## Next experiment
+## Matrix status
 
-Proceed to the planned host-generation × inference-weighting matrix. The key scientific comparison is matched versus deliberately mismatched assumptions about host weighting, under each incompleteness mechanism and completeness level.
+The planned host-generation × inference-weighting matrix has now been executed: 15,300 simulations across 153 conditions, with 100 runs per condition. The key comparison is matched versus deliberately mismatched assumptions about host weighting under each incompleteness mechanism and completeness level.
 
 Do not introduce an arbitrary selection-function denominator beta(H0). A defensible beta(H0) requires a consistent event/galaxy selection model and should be added only after the baseline model is validated.
 
