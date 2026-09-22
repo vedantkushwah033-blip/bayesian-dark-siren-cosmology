@@ -34,11 +34,15 @@ Then run the baseline validation:
 
     python run_validation.py
 
-Then the calibration:
+Then the baseline calibration:
 
     python run_calibration.py
 
-The calibration is the primary complete-catalogue reference.
+For the dedicated posterior-coverage calibration:
+
+    python run_calibration_curve.py
+
+The latter uses 2,000 independent simulations and writes `results/calibration_curve.csv`. Its reproduced empirical coverages are 87.45%, 94.35%, 97.35%, 99.05%, and 99.85% at nominal 50%, 68%, 80%, 90%, and 95% levels respectively. These values are calibration diagnostics for the present synthetic baseline.
 
 ## Main experiment
 
