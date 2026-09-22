@@ -3,6 +3,13 @@ name: Full Experiment Matrix
 on:
   push:
     branches: [main]
+    paths:
+      - "src/**"
+      - "run_experiment_matrix.py"
+      - "analyze_results.py"
+      - "make_figures.py"
+      - "requirements.txt"
+      - ".github/workflows/full_matrix.yml"
   workflow_dispatch:
 
 env:
