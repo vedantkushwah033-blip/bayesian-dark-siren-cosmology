@@ -1,0 +1,20 @@
+{
+  "title": "Bayesian Simulation Study of Galaxy-Catalogue Incompleteness and Host-Galaxy Weighting in Dark-Siren H0 Inference",
+  "description": "Controlled simulation study of galaxy-catalogue incompleteness and host-galaxy weighting in Bayesian H0 inference from dark-siren gravitational-wave events.",
+  "creators": [
+    {
+      "name": "Kushwaha, Vedant"
+    }
+  ],
+  "keywords": [
+    "dark sirens",
+    "gravitational-wave cosmology",
+    "Hubble constant",
+    "Bayesian inference",
+    "galaxy catalogues",
+    "catalogue incompleteness",
+    "host-galaxy weighting"
+  ],
+  "license": "MIT",
+  "upload_type": "software"
+}
