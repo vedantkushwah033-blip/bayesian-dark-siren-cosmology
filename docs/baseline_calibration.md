@@ -67,20 +67,17 @@ Measured results:
 
 The known-host control already shows a modest positive estimator bias and non-nominal interval coverage. The complete-catalogue dark-siren mixture produces substantially broader posteriors and still higher coverage.
 
-Therefore the baseline is **operationally validated as a reproducible simulation**, but it is **not perfectly calibrated in the strict statistical sense**. The incompleteness study must retain the complete-catalogue case as its internal control and report changes relative to that control.
+Therefore the baseline is **operationally validated as a reproducible simulation**, but it is **not perfectly calibrated in the strict statistical sense**. The incompleteness study retains the complete-catalogue case as its internal control and reports changes relative to that control.
 
-We should not describe the baseline as an exactly calibrated 68%/95% posterior until a later model refinement achieves that property.
+A subsequent dedicated 2,000-run coverage calibration, independently reproduced from the repository's current calibration script, found empirical coverage of 94.35% for nominal 68% intervals (with 50%, 80%, 90%, and 95% nominal levels also showing conservative coverage). This confirms that the conservative posterior coverage is a property of the current synthetic baseline rather than an accidental feature of the original 1,000-run sample.
 
-## Next stage
+## Follow-on experiments completed
 
-The next experiment should be a small pilot at 90%, 70%, and 50% completeness using:
+The planned follow-on work has now been executed:
 
-- uniform host generation
-- uniform inference weighting
-- random missingness
-- the same seeds across completeness levels
-- naive catalogue-only inference
+- **15,300-run experiment matrix:** 153 conditions spanning host-generation/inference weighting, completeness, and missingness mechanisms, with 100 independent runs per condition.
+- **3,600-run GP pilot:** a lightweight redshift-density reconstruction diagnostic; it narrowed intervals but increased bias and reduced 68% coverage, so it is retained as a negative diagnostic rather than a successful correction.
+- **2,000-run coverage calibration:** independent reproduction of the repository calibration script, confirming conservative baseline posterior coverage.
+- **Oracle missing-host validation:** retained as a separate control and not mixed with naive catalogue-only results.
 
-Only after inspecting this pilot should the full host-weighting × missingness matrix be launched.
-
-The oracle missing-host model remains a separate validation control and should not be mixed into the naive results.
+The next scientifically motivated stage is Version 2: an explicit event/galaxy selection and intensity model, followed by more realistic redshift, peculiar-velocity, clustering, and cosmological modelling. No arbitrary beta(H_0) selection correction should be introduced before that selection model exists.
