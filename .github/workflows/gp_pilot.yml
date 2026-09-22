@@ -3,10 +3,12 @@ name: GP Pilot
 on:
   workflow_dispatch:
   push:
+    branches: ["main"]
     paths:
       - "src/gp_reconstruction.py"
       - "run_gp_pilot.py"
       - "tests/test_gp_reconstruction.py"
+      - ".github/workflows/gp_pilot.yml"
       - "requirements.txt"
 
 jobs:
