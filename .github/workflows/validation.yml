@@ -41,6 +41,17 @@ jobs:
           mkdir -p calibration_output
           python run_calibration.py | tee calibration_output/calibration_summary.txt
 
+      - name: Run missing-host model pilot
+        run: |
+          mkdir -p missing_host_output
+          python run_missing_host_pilot.py | tee missing_host_output/missing_host_pilot.txt
+
+      - name: Upload missing-host pilot
+        uses: actions/upload-artifact@v4
+        with:
+          name: missing-host-pilot
+          path: missing_host_output/missing_host_pilot.txt
+
       - name: Run paired incompleteness pilot
         run: |
           mkdir -p pilot_output
