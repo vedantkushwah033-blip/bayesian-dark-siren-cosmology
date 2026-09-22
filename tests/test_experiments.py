@@ -54,3 +54,25 @@ def test_all_missingness_mechanisms_hit_requested_size():
         )
         assert len(rows) == 3
         assert all(np.isclose(r["realized_completeness"], 0.7) for r in rows)
+
+
+
+def test_missing_host_weighting_modes_are_distinct_controls():
+    inference_rows = run_repeated(
+        n_runs=3, n_galaxies=100, completeness=0.7, missingness="random",
+        host_generation="luminosity", inference_weighting="uniform",
+        include_missing_host_term=True, missing_host_weighting="inference",
+        seed=1234,
+    )
+    oracle_rows = run_repeated(
+        n_runs=3, n_galaxies=100, completeness=0.7, missingness="random",
+        host_generation="luminosity", inference_weighting="uniform",
+        include_missing_host_term=True, missing_host_weighting="oracle_true",
+        seed=1234,
+    )
+    assert all(r["missing_host_weighting"] == "inference" for r in inference_rows)
+    assert all(r["missing_host_weighting"] == "oracle_true" for r in oracle_rows)
+    assert any(
+        not np.isclose(a["missing_host_prior_mass"], b["missing_host_prior_mass"])
+        for a, b in zip(inference_rows, oracle_rows)
+    )
