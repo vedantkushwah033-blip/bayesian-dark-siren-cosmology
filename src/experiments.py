@@ -3,7 +3,12 @@
 import numpy as np
 from .simulations_v2 import simulate_galaxy_catalogue, choose_host, simulate_gw_event
 from .bayesian_inference import posterior_h0, posterior_summary
-from .completeness import random_missing_mask, faint_missing_mask, redshift_dependent_mask, sky_region_mask
+from .completeness import (
+    random_missing_mask,
+    faint_missing_mask,
+    redshift_dependent_mask,
+    sky_region_mask,
+)
 
 
 def _weights(cat, mode):
@@ -42,7 +47,12 @@ def run_repeated(
     include_missing_host_term=False,
     seed=2026,
 ):
-    """Run independent mock universes and return per-run diagnostics."""
+    """Run independent mock universes and return per-run diagnostics.
+
+    The missing-host component is intentionally an oracle term: it uses the
+    known hidden population from the simulation. This is a validation control,
+    not a claim about what a real survey can observe.
+    """
     if inference_weighting is None:
         inference_weighting = host_generation
 
@@ -51,10 +61,15 @@ def run_repeated(
 
     for r in range(n_runs):
         s = seed + r
-        cat = simulate_galaxy_catalogue(n_galaxies=n_galaxies, H0_true=H0_true, seed=s)
+        cat = simulate_galaxy_catalogue(
+            n_galaxies=n_galaxies, H0_true=H0_true, seed=s
+        )
         true_weights = _weights(cat, host_generation)
         host = choose_host(cat, weighting=host_generation, seed=s + 100000)
-        gw = simulate_gw_event(cat["true_distance_mpc"][host], seed=s + 200000)
+        gw = simulate_gw_event(
+            cat["true_distance_mpc"][host],
+            seed=s + 200000,
+        )
         mask = _mask(cat, completeness, missingness, s + 300000)
 
         hidden = ~mask
@@ -81,29 +96,37 @@ def run_repeated(
             missing_weights=missing_w,
         )
         summary = posterior_summary(grid, posterior)
-        half68 = max((summary["upper_68"] - summary["lower_68"]) / 2.0, 1e-12)
 
-        rows.append({
-            "run": r,
-            "host_generation": host_generation,
-            "inference_weighting": inference_weighting,
-            "missingness": missingness,
-            "target_completeness": completeness,
-            "realized_completeness": float(mask.mean()),
-            "host_observed": bool(mask[host]),
-            "host_redshift": float(cat["redshift"][host]),
-            "missing_host_prior_mass": float(missing_weight),
-            "median": float(summary["median"]),
-            "mean": float(summary["mean"]),
-            "posterior_sd": float(summary["posterior_sd"]),
-            "lower_68": float(summary["lower_68"]),
-            "upper_68": float(summary["upper_68"]),
-            "lower_95": float(summary["lower_95"]),
-            "upper_95": float(summary["upper_95"]),
-            "width_68": float(summary["upper_68"] - summary["lower_68"]),
-            "width_95": float(summary["upper_95"] - summary["lower_95"]),
-            "pull": float((summary["median"] - H0_true) / max(summary["posterior_sd"], 1e-12)),
-        })
+        rows.append(
+            {
+                "run": r,
+                "host_generation": host_generation,
+                "inference_weighting": inference_weighting,
+                "missingness": missingness,
+                "target_completeness": completeness,
+                "realized_completeness": float(mask.mean()),
+                "host_observed": bool(mask[host]),
+                "host_redshift": float(cat["redshift"][host]),
+                "missing_host_prior_mass": float(missing_weight),
+                "median": float(summary["median"]),
+                "mean": float(summary["mean"]),
+                "posterior_sd": float(summary["posterior_sd"]),
+                "lower_68": float(summary["lower_68"]),
+                "upper_68": float(summary["upper_68"]),
+                "lower_95": float(summary["lower_95"]),
+                "upper_95": float(summary["upper_95"]),
+                "width_68": float(summary["upper_68"] - summary["lower_68"]),
+                "width_95": float(summary["upper_95"] - summary["lower_95"]),
+                "pull_median": float(
+                    (summary["median"] - H0_true)
+                    / max(summary["posterior_sd"], 1e-12)
+                ),
+                "pull_mean": float(
+                    (summary["mean"] - H0_true)
+                    / max(summary["posterior_sd"], 1e-12)
+                ),
+            }
+        )
 
     if not rows:
         raise ValueError("No valid simulation runs.")
