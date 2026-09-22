@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: "Bayesian Simulation Study of Galaxy-Catalogue Incompleteness and Host-Galaxy Weighting in Dark-Siren H0 Inference"
+message: "If you use this simulation study, please cite this repository."
+type: software
+authors:
+  - family-names: Kushwaha
+    given-names: Vedant
+repository-code: "https://github.com/vedantkushwah033-blip/bayesian-dark-siren-cosmology"
+abstract: "A controlled simulation study of how galaxy-catalogue incompleteness and host-galaxy weighting affect Bayesian H0 inference from dark-siren gravitational-wave events."
+keywords:
+  - dark sirens
+  - gravitational-wave cosmology
+  - Hubble constant
+  - Bayesian inference
+  - galaxy catalogues
+  - catalogue incompleteness
+  - host-galaxy weighting
+license: MIT
