@@ -36,6 +36,17 @@ jobs:
           mkdir -p validation_output
           python run_validation.py | tee validation_output/baseline_summary.txt
 
+      - name: Run 1000-run complete-catalogue calibration
+        run: |
+          mkdir -p calibration_output
+          python run_calibration.py | tee calibration_output/calibration_summary.txt
+
+      - name: Upload calibration summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: baseline-calibration
+          path: calibration_output/calibration_summary.txt
+
       - name: Upload validation summary
         uses: actions/upload-artifact@v4
         with:
