@@ -38,6 +38,7 @@ def run_known_host(n_runs=1000, H0_true=70.0, seed=2026):
             "upper_95": summary["upper_95"],
             "pull_median": (summary["median"] - H0_true) / max(summary["posterior_sd"], 1e-12),
             "pull_mean": (summary["mean"] - H0_true) / max(summary["posterior_sd"], 1e-12),
+            "host_observed": True,
         })
     return rows
 
