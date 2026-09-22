@@ -16,3 +16,12 @@ keywords:
   - catalogue incompleteness
   - host-galaxy weighting
 license: MIT
+
+preferred-citation:
+  type: software
+  authors:
+    - family-names: Kushwaha
+      given-names: Vedant
+  title: "Bayesian Simulation Study of Galaxy-Catalogue Incompleteness and Host-Galaxy Weighting in Dark-Siren H0 Inference"
+  version: "1.0.0"
+  year: 2026
