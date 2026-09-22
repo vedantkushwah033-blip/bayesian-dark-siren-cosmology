@@ -41,7 +41,7 @@ def compare_missing_host_models(
                 "aware_width_68": a["width_68"],
                 "naive_host_observed": n["host_observed"],
                 "aware_host_observed": a["host_observed"],
-                "naive_pull": n["pull"],
-                "aware_pull": a["pull"],
+                "naive_pull": n["pull_median"],
+                "aware_pull": a["pull_median"],
             })
     return paired
