@@ -21,3 +21,17 @@ The clearest mechanism-specific effect in this baseline is redshift-dependent in
 Proceed to the planned host-generation × inference-weighting matrix. The key scientific comparison is matched versus deliberately mismatched assumptions about host weighting, under each incompleteness mechanism and completeness level.
 
 Do not introduce an arbitrary selection-function denominator beta(H0). A defensible beta(H0) requires a consistent event/galaxy selection model and should be added only after the baseline model is validated.
+
+## GP pilot result (3,600 paired runs)
+
+The GP extension completed successfully. The pilot contains 300 paired simulations for each of 12 mechanism/completeness conditions, comparing uniform catalogue weighting with the current GP-smoothed redshift-density weighting.
+
+The result is a **negative control result rather than a GP improvement**. Across all 3,600 paired runs, the GP posterior was narrower on average by 1.98 km/s/Mpc in 68% interval width, but its mean median-bias increased by 1.31 km/s/Mpc relative to the naive weighting. Overall 68% coverage decreased from 95.6% to 92.8% (a 2.78 percentage-point decrease).
+
+The effect was present for all four missingness mechanisms. At 50% completeness, the GP bias increase was about +1.38, +1.36, +1.06, and +1.47 km/s/Mpc for faint, random, redshift-dependent, and sky-dependent missingness respectively. The corresponding reductions in 68% width were about 1.97, 2.00, 1.46, and 2.03 km/s/Mpc.
+
+This does **not** show that Gaussian processes are intrinsically unsuitable for dark-siren inference. It shows that this particular lightweight implementation—an RBF GP fitted to binned log redshift counts and then used to reweight the already observed galaxies—does not recover the missing-host information in the present simulation. It tends to concentrate probability on reconstructed density peaks, narrowing the posterior without enough reduction in systematic error.
+
+Accordingly, the GP pilot should be reported as a falsification/diagnostic experiment, not as a successful method. No claim of GP-based improvement should be made from this implementation.
+
+The current scientific stopping point is therefore the baseline incompleteness/host-weighting matrix plus the documented GP negative result. A substantially different GP model would require a proper intensity/selection formulation and should be treated as a future extension rather than added solely to obtain a positive result.
