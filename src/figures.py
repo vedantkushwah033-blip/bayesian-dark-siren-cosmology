@@ -167,3 +167,66 @@ def plot_mechanism_heatmap(
     cbar = fig.colorbar(im, ax=ax)
     cbar.set_label("Median H₀ bias (km/s/Mpc)")
     _save(fig, output)
+
+
+def plot_gp_comparison(
+    gp_csv="results/gp_pilot.csv",
+    output="results/figures/gp_bias_width_comparison.png",
+):
+    """Compare naive and GP bias/width across executed paired runs."""
+    rows = _rows(gp_csv)
+    mechanisms = ["random", "faint", "redshift", "sky"]
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))
+    for mechanism in mechanisms:
+        sub = [r for r in rows if r["mechanism"] == mechanism]
+        if not sub:
+            continue
+        levels = sorted({float(r["completeness"]) for r in sub}, reverse=True)
+        naive_b, gp_b, naive_w, gp_w = [], [], [], []
+        for level in levels:
+            s = [r for r in sub if math.isclose(float(r["completeness"]), level)]
+            naive_b.append(sum(float(r["naive_bias"]) for r in s) / len(s))
+            gp_b.append(sum(float(r["gp_bias"]) for r in s) / len(s))
+            naive_w.append(sum(float(r["naive_width_68"]) for r in s) / len(s))
+            gp_w.append(sum(float(r["gp_width_68"]) for r in s) / len(s))
+        axes[0].plot(levels, naive_b, marker="o", linestyle="-", label=f"{mechanism} — naive")
+        axes[0].plot(levels, gp_b, marker="o", linestyle="--", label=f"{mechanism} — GP")
+        axes[1].plot(levels, naive_w, marker="o", linestyle="-", label=f"{mechanism} — naive")
+        axes[1].plot(levels, gp_w, marker="o", linestyle="--", label=f"{mechanism} — GP")
+    axes[0].axhline(0, linestyle="--", linewidth=1)
+    axes[0].set_xlabel("Catalogue completeness")
+    axes[0].set_ylabel("Mean median H₀ bias (km/s/Mpc)")
+    axes[0].set_title("Bias: naive vs GP")
+    axes[1].set_xlabel("Catalogue completeness")
+    axes[1].set_ylabel("Mean 68% posterior width (km/s/Mpc)")
+    axes[1].set_title("Posterior width: naive vs GP")
+    axes[1].legend(fontsize=7, ncol=2)
+    _save(fig, output)
+
+
+def plot_gp_coverage(
+    gp_summary_csv="results/gp_pilot_summary.csv",
+    output="results/figures/gp_coverage_comparison.png",
+):
+    """Compare empirical 68% coverage from the executed GP pilot."""
+    rows = _rows(gp_summary_csv)
+    fig, ax = plt.subplots(figsize=(8, 5))
+    for mechanism in ("random", "faint", "redshift", "sky"):
+        sub = sorted(
+            [r for r in rows if r["mechanism"] == mechanism],
+            key=lambda r: float(r["completeness"]),
+        )
+        if not sub:
+            continue
+        x = [float(r["completeness"]) for r in sub]
+        ax.plot(x, [float(r["naive_coverage_68"]) for r in sub],
+                marker="o", label=f"{mechanism} — naive")
+        ax.plot(x, [float(r["gp_coverage_68"]) for r in sub],
+                marker="o", linestyle="--", label=f"{mechanism} — GP")
+    ax.axhline(0.68, linestyle=":", linewidth=1, label="Nominal 68%")
+    ax.set_xlabel("Catalogue completeness")
+    ax.set_ylabel("Empirical 68% coverage")
+    ax.set_title("Coverage: naive vs GP redshift-density weighting")
+    ax.set_ylim(0, 1)
+    ax.legend(fontsize=7, ncol=2)
+    _save(fig, output)
