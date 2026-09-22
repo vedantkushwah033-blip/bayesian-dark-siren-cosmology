@@ -35,6 +35,19 @@ Vedant Kushwaha
 B.Sc.–M.Sc. Applied Statistics  
 Delhi Technological University
 
+## Project snapshot for outreach
+
+Use the following compact factual summary when adapting the email:
+
+- 15,300 simulations across 153 host-weighting/incompleteness conditions.
+- 3,600 paired runs for a lightweight GP density-reconstruction diagnostic.
+- Baseline nominal 68% posterior coverage: 94.35% in an independent 2,000-run calibration reproduction.
+- The GP pilot narrowed intervals but increased mean median bias from 1.593 to 2.903 km/s/Mpc and reduced 68% coverage from 95.61% to 92.83%.
+- The project is explicitly a controlled synthetic study, not a real LVK H0 measurement.
+- The next proposed extension is an explicit event/galaxy selection and intensity model, followed by realistic redshift, peculiar-velocity, clustering, and cosmological modelling.
+
+Avoid describing the GP result as a failure of Gaussian processes generally. Describe it as a negative result for the specific lightweight reconstruction-and-reweighting implementation used here.
+
 ## Personalization rule
 
 Before sending an email:
