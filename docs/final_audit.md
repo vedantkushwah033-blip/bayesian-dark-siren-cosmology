@@ -14,8 +14,8 @@ This checklist records the final repository audit for the baseline dark-siren si
 - The final report explicitly describes the GP model as a lightweight density-reconstruction diagnostic rather than a full survey-selection model.
 - The executed full matrix contains **15,300 runs across 153 conditions**.
 - The executed GP pilot contains **3,600 paired runs**.
-- The latest Full Experiment Matrix workflow completed successfully at run `35758311087`.
-- The latest Validation workflow completed successfully at run `35758311024`.
+- The full experiment matrix has an executed artifact containing 15,300 rows, 153 conditions, and 12 figures.
+- The validation workflow has an executed artifact for the baseline diagnostics.
 - The full-matrix artifact was inspected and contains the raw matrix, summary matrix, and publication figures.
 - No arbitrary `beta(H0)` selection denominator is introduced.
 
@@ -30,7 +30,7 @@ This checklist records the final repository audit for the baseline dark-siren si
 
 ## Execution verification
 
-The execution checks are now complete for the current release candidate:
+The execution checks for the main Version-1 release candidate are:
 
 - Full Experiment Matrix: **PASS**
 - Validation workflow: **PASS**
@@ -38,6 +38,7 @@ The execution checks are now complete for the current release candidate:
 - Raw matrix integrity: **15,300 rows, no missing values**
 - Summary integrity: **153 conditions, no missing values**
 - Publication figures in artifact: **12**
+- Dedicated 2,000-run coverage calibration: **independently reproduced from repository source; GitHub Actions artifact not independently retrieved through the current connector**
 
 The numerical outputs referenced by the final report are therefore tied to an executed workflow artifact rather than only repository source code.
 
