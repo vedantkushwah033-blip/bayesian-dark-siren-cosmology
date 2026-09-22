@@ -76,6 +76,8 @@ A separate known-host diagnostic gave 68% coverage of 74.9% and mean 68% width o
 
 The study therefore treats the complete-catalogue control as the reference point rather than forcing artificial calibration.
 
+A dedicated 2,000-run posterior-coverage calibration was subsequently reproduced from the repository calibration script with the same seed sequence and inference implementation. The empirical coverage curve was 87.45% (50% nominal), 94.35% (68%), 97.35% (80%), 99.05% (90%), and 99.85% (95%), with Monte Carlo standard errors of 0.0074, 0.0052, 0.0036, 0.0022, and 0.0009 respectively. The result confirms conservative posterior coverage in this synthetic baseline and strengthens the earlier 1,000-run calibration. It is a calibration diagnostic for this model, not a claim about a realistic dark-siren analysis.
+
 ---
 
 ## 4. Catalogue incompleteness
@@ -179,7 +181,7 @@ The GP extension should therefore be reported as a falsification/diagnostic expe
 
 The completed simulation supports five conditional conclusions:
 
-1. **The baseline pipeline is reproducible but not perfectly calibrated.** The complete-catalogue 68% coverage is about 94.4%, so later effects should be interpreted relative to the same control rather than against an idealized zero-bias benchmark.
+1. **The baseline pipeline is reproducible but its posterior intervals are conservative.** The complete-catalogue 68% coverage is about 94.4%, and the dedicated 2,000-run calibration gives 94.35% coverage for nominal 68% intervals. Later effects should therefore be interpreted relative to the same calibrated control rather than against an idealized zero-bias benchmark.
 
 2. **Random incompleteness alone is weak in this toy setup.** Reducing completeness from 100% to 50% did not produce a large change in the random-missingness pilot.
 
@@ -236,6 +238,7 @@ The main experimental outputs were generated through GitHub Actions:
 - 15,300-run host-weighting/incompleteness matrix;
 - 3,600-run paired GP pilot;
 - 1,000-run baseline calibration;
+- 2,000-run posterior-coverage calibration;
 - known-host diagnostic;
 - paired missing-host and incompleteness pilots.
 
