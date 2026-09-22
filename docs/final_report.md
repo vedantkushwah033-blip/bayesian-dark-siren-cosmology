@@ -248,3 +248,12 @@ All reported numerical results in this report are taken from executed simulation
 This project does not claim to solve dark-siren cosmology. It demonstrates a controlled way to measure how catalogue incompleteness and host-population assumptions propagate into Bayesian H0 inference.
 
 The strongest outcome is methodological: the simulation separates catalogue missingness, host-prior misspecification, and reconstruction assumptions into independently testable controls. The GP extension provides a useful negative result by showing that narrower posteriors are not automatically better posteriors when systematic uncertainty is not recovered.
+
+
+## Appendix A — Reproducibility and interpretation checklist
+
+Before presenting the results as scientific conclusions, verify that every reported number comes from an executed artifact and that the complete-catalogue control is shown alongside incomplete cases. The GP result should be presented as a negative diagnostic: narrower intervals are not automatically better when coverage and bias deteriorate.
+
+The principal claims are conditional on the simulation assumptions. In particular, the low-redshift distance relation, simplified distance uncertainty, synthetic host proxies, and catalogue-selection rules are not substitutes for a real LVK galaxy-catalogue and detector-selection model.
+
+The repository's executed artifacts should be treated as the authoritative numerical record. Future extensions should preserve the existing controls so that added realism can be evaluated against the same baseline rather than replacing it.
